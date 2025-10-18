@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\font\Roboto-Bold.ttf" />
+    <None Remove="Resources\font\Roboto-Light.ttf" />
+    <None Remove="Resources\font\Roboto-Medium.ttf" />
+    <None Remove="Resources\font\Roboto-Regular.ttf" />
+    <None Remove="Resources\font\SF-Pro-Rounded-Bold.ttf" />
+    <None Remove="Resources\font\SF-Pro-Rounded-Medium.ttf" />
+    <None Remove="Resources\font\SF-Pro-Rounded-Regular.ttf" />
+    <None Remove="Resources\font\SF-Pro-Rounded-Semibold.ttf" />
+    <None Remove="Resources\icons\moon.png" />
+    <None Remove="Resources\icons\sun.png" />
+    <None Remove="Resources\icons\telegram.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dark-bg.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\font\Roboto-Bold.ttf" />
+    <Resource Include="Resources\font\Roboto-Light.ttf" />
+    <Resource Include="Resources\font\Roboto-Medium.ttf" />
+    <Resource Include="Resources\font\Roboto-Regular.ttf" />
+    <Resource Include="Resources\font\SF-Pro-Rounded-Bold.ttf" />
+    <Resource Include="Resources\font\SF-Pro-Rounded-Medium.ttf" />
+    <Resource Include="Resources\font\SF-Pro-Rounded-Regular.ttf" />
+    <Resource Include="Resources\font\SF-Pro-Rounded-Semibold.ttf" />
+    <Resource Include="Resources\icons\telegram.png" />
+    <Resource Include="Resources\light-bg.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\icons\moon.png" />
+    <Resource Include="Resources\icons\sun.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="search_runner.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

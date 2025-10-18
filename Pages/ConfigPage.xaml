@@ -1,0 +1,154 @@
+<Page x:Class="RathoreSearchAutomation.Pages.ConfigPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="Transparent">
+
+    <Page.Resources>
+        <!-- Font Families -->
+        <FontFamily x:Key="SFProRounded">pack://application:,,,/Resources/Fonts/#SF Pro Rounded</FontFamily>
+        <FontFamily x:Key="Roboto">pack://application:,,,/Resources/Fonts/#Roboto</FontFamily>
+    </Page.Resources>
+
+    <Grid>
+        <!-- Glass Card Container -->
+        <Border MaxWidth="480"
+                Padding="50"
+                CornerRadius="25">
+            
+            <Border.Background>
+                <SolidColorBrush Color="White" Opacity="0.15"/>
+            </Border.Background>
+            
+            <Border.BorderBrush>
+                <SolidColorBrush Color="White" Opacity="0.3"/>
+            </Border.BorderBrush>
+            
+            <Border.BorderThickness>1</Border.BorderThickness>
+            
+            <Border.Effect>
+                <DropShadowEffect Color="Black" Direction="270" ShadowDepth="20" 
+                                BlurRadius="60" Opacity="0.5"/>
+            </Border.Effect>
+            
+            <StackPanel>
+                <!-- RATHORE Title -->
+                <TextBlock x:Name="TitleText"
+                          Text="RATHORE"
+                          FontFamily="{StaticResource SFProRounded}"
+                          FontSize="32"
+                          FontWeight="Bold"
+                          Foreground="Black"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,20">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="White" Direction="0" ShadowDepth="0" 
+                                        BlurRadius="10" Opacity="0.8"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                
+                <!-- Configuration Text -->
+                <TextBlock x:Name="ConfigText"
+                          Text="Configuration"
+                          FontFamily="{StaticResource SFProRounded}"
+                          FontSize="24"
+                          FontWeight="SemiBold"
+                          Foreground="#E6000000"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,5">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="White" Direction="0" ShadowDepth="0" 
+                                        BlurRadius="8" Opacity="0.6"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                
+                <TextBlock x:Name="SubtitleText"
+                          Text="Set your search parameters"
+                          FontFamily="{StaticResource Roboto}"
+                          FontSize="14"
+                          Foreground="#B3000000"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,30">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="White" Direction="0" ShadowDepth="0" 
+                                        BlurRadius="6" Opacity="0.5"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                
+                <!-- Number of Search Field -->
+                <TextBlock x:Name="SearchCountLabel"
+                          Text="Number of Search"
+                          FontFamily="{StaticResource Roboto}"
+                          FontSize="14"
+                          FontWeight="Medium"
+                          Foreground="#E6000000"
+                          Margin="0,0,0,8">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="White" Direction="0" ShadowDepth="0" 
+                                        BlurRadius="6" Opacity="0.5"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                
+                <TextBox x:Name="SearchCountTextBox"
+                        Style="{StaticResource GlassTextBox}"
+                        FontFamily="{StaticResource Roboto}"
+                        Margin="0,0,0,20"
+                        Text="20"
+                        PreviewTextInput="NumberValidation"/>
+                
+                <!-- Edge Profile Field -->
+                <TextBlock x:Name="ProfileLabel"
+                          Text="Edge Profile"
+                          FontFamily="{StaticResource Roboto}"
+                          FontSize="14"
+                          FontWeight="Medium"
+                          Foreground="#E6000000"
+                          Margin="0,0,0,8">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="White" Direction="0" ShadowDepth="0" 
+                                        BlurRadius="6" Opacity="0.5"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                
+                <ComboBox x:Name="ProfileComboBox"
+                         Style="{StaticResource GlassComboBox}"
+                         FontFamily="{StaticResource Roboto}"
+                         Margin="0,0,0,25"
+                         DisplayMemberPath="Value"
+                         SelectedValuePath="Key"/>
+                
+                <!-- Start Search Button -->
+                <Button x:Name="StartButton"
+                       Click="StartButton_Click"
+                       Style="{StaticResource GlassButton}"
+                       FontFamily="{StaticResource SFProRounded}"
+                       Height="45"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,25">
+                    <StackPanel Orientation="Horizontal">
+                        <Polygon Points="0,0 16,8 0,16" Fill="Black" Margin="0,0,8,0"/>
+                        <TextBlock Text="Start Search" 
+                                  Foreground="Black"
+                                  VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Logout Button -->
+                <Button x:Name="LogoutButton"
+                       Click="LogoutButton_Click"
+                       Style="{StaticResource GlassButton}"
+                       FontFamily="{StaticResource Roboto}"
+                       HorizontalAlignment="Center"
+                       Padding="15,10">
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Width="16" Height="16" Fill="Black" Margin="0,0,8,0"/>
+                        <TextBlock Text="Logout" 
+                                  Foreground="Black"
+                                  FontSize="14"
+                                  VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>
