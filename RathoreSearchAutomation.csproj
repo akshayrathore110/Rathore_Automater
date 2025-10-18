@@ -14,6 +14,7 @@
     <None Remove="Resources\font\SF-Pro-Rounded-Medium.ttf" />
     <None Remove="Resources\font\SF-Pro-Rounded-Regular.ttf" />
     <None Remove="Resources\font\SF-Pro-Rounded-Semibold.ttf" />
+    <None Remove="Resources\icons\App_logo.png" />
     <None Remove="Resources\icons\moon.png" />
     <None Remove="Resources\icons\sun.png" />
     <None Remove="Resources\icons\telegram.png" />
@@ -30,6 +31,7 @@
     <Resource Include="Resources\font\SF-Pro-Rounded-Medium.ttf" />
     <Resource Include="Resources\font\SF-Pro-Rounded-Regular.ttf" />
     <Resource Include="Resources\font\SF-Pro-Rounded-Semibold.ttf" />
+    <Resource Include="Resources\icons\App_logo.png" />
     <Resource Include="Resources\icons\telegram.png" />
     <Resource Include="Resources\light-bg.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
