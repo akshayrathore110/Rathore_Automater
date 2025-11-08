@@ -36,6 +36,11 @@ namespace RathoreSearchAutomation
         {
             WindowState = WindowState.Minimized;
         }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try { DragMove(); } catch { }
+        }
         
         private void MaximizeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -68,9 +73,9 @@ namespace RathoreSearchAutomation
         {
             try
             {
-                // Find icon TextBlocks in the button template
-                var sunIcon = FindVisualChild<TextBlock>(ThemeToggleButton, "SunIcon");
-                var moonIcon = FindVisualChild<TextBlock>(ThemeToggleButton, "MoonIcon");
+                // Find icon Images in the button template
+                var sunIcon = FindVisualChild<System.Windows.Controls.Image>(ThemeToggleButton, "SunIcon");
+                var moonIcon = FindVisualChild<System.Windows.Controls.Image>(ThemeToggleButton, "MoonIcon");
                 
                 if (isDarkMode)
                 {
@@ -84,7 +89,7 @@ namespace RathoreSearchAutomation
                     // Update title bar colors for dark mode
                     TitleBarText.Foreground = new SolidColorBrush(Color.FromArgb(230, 255, 255, 255)); // #E6FFFFFF
                     
-                    // Update window button colors
+                    // Update window button colors (text)
                     UpdateButtonTextColor(MinimizeButton, "MinimizeText", "#E6FFFFFF");
                     UpdateButtonTextColor(MaximizeButton, "MaximizeText", "#E6FFFFFF");
                     UpdateButtonTextColor(CloseButton, "CloseText", "#E6FFFFFF");
@@ -101,7 +106,7 @@ namespace RathoreSearchAutomation
                     // Update title bar colors for light mode
                     TitleBarText.Foreground = new SolidColorBrush(Color.FromArgb(230, 0, 0, 0)); // #E6000000
                     
-                    // Update window button colors
+                    // Update window button colors (text)
                     UpdateButtonTextColor(MinimizeButton, "MinimizeText", "#E6000000");
                     UpdateButtonTextColor(MaximizeButton, "MaximizeText", "#E6000000");
                     UpdateButtonTextColor(CloseButton, "CloseText", "#E6000000");
@@ -137,7 +142,7 @@ namespace RathoreSearchAutomation
         }
         
         // Helper method to find child controls in template
-        private T FindVisualChild<T>(DependencyObject parent, string name) where T : FrameworkElement
+        private T? FindVisualChild<T>(DependencyObject parent, string name) where T : FrameworkElement
         {
             if (parent == null) return null;
             
@@ -176,6 +181,42 @@ namespace RathoreSearchAutomation
             var runningPage = new RunningPage(this, totalSearches, profileKey);
             OverlayFrame.Navigate(runningPage);
             RunningOverlay.Visibility = Visibility.Visible;
+        }
+
+        // Starts a batch of runs over multiple profiles and repeats per profile
+        public void StartBatchRuns(int totalSearches, System.Collections.Generic.List<int> profileKeys, int repeats)
+        {
+            if (profileKeys == null || profileKeys.Count == 0 || repeats < 1)
+            {
+                return;
+            }
+
+            var queue = new System.Collections.Generic.Queue<(int profileKey, int runIndex)>();
+            foreach (var key in profileKeys)
+            {
+                for (int i = 0; i < repeats; i++)
+                {
+                    queue.Enqueue((key, i + 1));
+                }
+            }
+
+            void StartNext()
+            {
+                if (queue.Count == 0)
+                {
+                    // All done
+                    int total = totalSearches * profileKeys.Count * repeats;
+                    ShowCompletionPage(total);
+                    return;
+                }
+
+                var next = queue.Dequeue();
+                var runningPage = new RunningPage(this, totalSearches, next.profileKey, batchMode: true, onSingleRunCompleted: StartNext);
+                OverlayFrame.Navigate(runningPage);
+                RunningOverlay.Visibility = Visibility.Visible;
+            }
+
+            StartNext();
         }
         
         public void HideRunningPage()

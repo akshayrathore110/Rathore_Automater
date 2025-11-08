@@ -10,10 +10,15 @@
     </Page.Resources>
 
     <Grid>
-        <!-- Glass Card Container -->
-        <Border MaxWidth="500"
-                Padding="50"
-                CornerRadius="25">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+        <!-- Glass Card Container (stretches with window, with margins) -->
+        <Border Margin="20"
+            MinWidth="420"
+            Padding="32"
+            CornerRadius="25"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center">
             
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity="0.15"/>
@@ -164,6 +169,7 @@
                     </Button>
                 </Grid>
             </StackPanel>
-        </Border>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </Page>

@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\wpfproject\RathoreSearchAutomation\App.xaml
-6823255906
+7-1077111908
 
-111696246017
-198-1127337667
-MainWindow.xaml;Pages\CompletionPage.xaml;Pages\ConfigPage.xaml;Pages\LoginPage.xaml;Pages\RunningPage.xaml;Resources\Styles.xaml;
+17-864540818
+1991094765241
+MainWindow.xaml;Pages\CompletionPage.xaml;Pages\ConfigPage.xaml;Pages\LoginPage.xaml;Pages\RunningPage.xaml;Resources\Styles.xaml;Windows\EdgeOverlayWindow.xaml;
 
-True
+False
 

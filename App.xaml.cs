@@ -1,5 +1,8 @@
 using System;
+using System.IO;
+using System.Linq;
 using System.Windows;
+using RathoreSearchAutomation.Helpers;
 
 namespace RathoreSearchAutomation
 {
@@ -12,6 +15,27 @@ namespace RathoreSearchAutomation
             // Initialize application resources
             // Set default theme
             ThemeManager.Instance.IsDarkMode = false;
+
+            // Early daily reset for all profile stores
+            try
+            {
+                var dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
+                if (Directory.Exists(dataDir))
+                {
+                    foreach (var file in Directory.EnumerateFiles(dataDir, "profile_*.json"))
+                    {
+                        var name = Path.GetFileNameWithoutExtension(file);
+                        // profile_{key}.json -> extract key
+                        var parts = name.Split('_');
+                        if (parts.Length >= 2 && int.TryParse(parts[1], out int key))
+                        {
+                            var store = new ProfileDataStore(key);
+                            store.ResetIfDateChanged();
+                        }
+                    }
+                }
+            }
+            catch { }
         }
     }
     

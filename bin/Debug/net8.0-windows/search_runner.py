@@ -207,9 +207,34 @@ search_dict = {
     199: "How to use parabolic SAR with MACD in crypto",
     200: "Class 12 Chemistry polymers solved examples",
 }
+def _print(line: str):
+    print(line, flush=True)
+
+def _read_control(path: str):
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def _wait_with_checks(seconds: float, control_path: str | None):
+    end = time.time() + seconds
+    while time.time() < end:
+        if control_path and os.path.isfile(control_path):
+            ctl = _read_control(control_path)
+            if ctl.get("stop"):
+                return "stop"
+            while ctl.get("paused"):
+                _print("STATUS: Paused")
+                time.sleep(0.3)
+                ctl = _read_control(control_path)
+        time.sleep(0.1)
+    return None
+
 def run_searches(num_queries: int, profile_key: int):
     """Run the sequence of searches."""
-    print("STATUS: Starting Edge browser...")
+    _print("STATUS: Starting Edge browser...")
+    control_path = os.getenv("RSA_CONTROL_FILE")
     
     # Launch Edge with profile
     profiles = _detect_edge_profiles()
@@ -219,30 +244,74 @@ def run_searches(num_queries: int, profile_key: int):
     else:
         os.system('start msedge')
 
-    time.sleep(3)
+    res = _wait_with_checks(3, control_path)
+    if res == "stop":
+        _print("STATUS: Stopped by user")
+        return
     
-    print("STATUS: Starting searches...")
+    _print("STATUS: Starting searches...")
     
     # Open a single new tab before starting
     pyautogui.hotkey("ctrl", "t")
-    time.sleep(0.8)
+    res = _wait_with_checks(0.8, control_path)
+    if res == "stop":
+        _print("STATUS: Stopped by user")
+        return
     
-    random_keys = random.sample(range(1, len(search_dict) + 1), num_queries)
-    
+    # Exclude already used queries passed via file
+    used_file = os.getenv("RSA_USED_KEYS_FILE")
+    used_queries = set()
+    if used_file and os.path.isfile(used_file):
+        try:
+            with open(used_file, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        used_queries.add(line)
+        except Exception:
+            pass
+
+    # Build list of available keys not yet used (by query string)
+    available_items = []
+    for k, q in search_dict.items():
+        if q not in used_queries:
+            available_items.append(k)
+
+    if len(available_items) < num_queries:
+        _print(f"STATUS: Not enough new queries available ({len(available_items)} of {num_queries}); will use what is left.")
+        num_queries = len(available_items)
+
+    random_keys = random.sample(available_items, num_queries)
+
     for i, k in enumerate(random_keys):
+        # Cooperatively pause/stop before each step
+        res = _wait_with_checks(0, control_path)
+        if res == "stop":
+            _print("STATUS: Stopped by user")
+            break
         query = search_dict[k]
-        print(f"PROGRESS: {i+1}/{num_queries}")
+        _print(f"QUERY: {query}")
+        _print(f"PROGRESS: {i+1}/{num_queries}")
         
         # Perform search in the existing tab
         pyautogui.hotkey("ctrl", "l")
-        time.sleep(0.3)
+        res = _wait_with_checks(0.3, control_path)
+        if res == "stop":
+            _print("STATUS: Stopped by user")
+            break
         pyautogui.typewrite(query, interval=0.02)
-        time.sleep(0.3)
+        res = _wait_with_checks(0.3, control_path)
+        if res == "stop":
+            _print("STATUS: Stopped by user")
+            break
         pyautogui.hotkey("enter")
-        time.sleep(5)
+        res = _wait_with_checks(5, control_path)
+        if res == "stop":
+            _print("STATUS: Stopped by user")
+            break
     
-    print("STATUS: Completed all searches")
-    print("COMPLETED")
+    _print("STATUS: Completed all searches")
+    _print("COMPLETED")
 
 def _detect_edge_profiles():
     """Detect available Edge profiles - FIXED for 'Profile' with capital P"""
@@ -267,7 +336,7 @@ def _detect_edge_profiles():
 if __name__ == '__main__':
     # Get parameters from command line
     if len(sys.argv) != 3:
-        print("ERROR: Usage: python search_runner.py <num_searches> <profile_key>")
+        _print("ERROR: Usage: python search_runner.py <num_searches> <profile_key>")
         sys.exit(1)
     
     try:
@@ -275,5 +344,5 @@ if __name__ == '__main__':
         profile_key = int(sys.argv[2])
         run_searches(num_searches, profile_key)
     except Exception as e:
-        print(f"ERROR: {str(e)}")
+        _print(f"ERROR: {str(e)}")
         sys.exit(1)

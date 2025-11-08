@@ -1,0 +1,52 @@
+<Window x:Class="RathoreSearchAutomation.Windows.EdgeOverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="EdgeOverlayWindow"
+        Width="800" Height="600"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        IsHitTestVisible="False"
+        TextOptions.TextRenderingMode="ClearType"
+        TextOptions.TextFormattingMode="Display"
+        UseLayoutRounding="True">
+    <Grid>
+        <!-- Simple top-left overlay panel -->
+        <Border Margin="12" Padding="12"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                CornerRadius="6"
+                Background="#70000000"
+                IsHitTestVisible="False">
+            <StackPanel>
+                <TextBlock x:Name="StatusText"
+                           Text="Rathore Overlay — Running"
+                           Foreground="#CC80D8FF"
+                           FontSize="16"
+                           FontFamily="Segoe UI"
+                           FontWeight="SemiBold">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#AA000000" ShadowDepth="0" BlurRadius="6" Opacity="0.8"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock x:Name="ProgressText"
+                           Text="Progress: 0 / 0"
+                           Margin="0,4,0,0"
+                           Foreground="#E6FFFFFF"
+                           FontSize="14"
+                           FontFamily="Segoe UI"
+                           FontWeight="Normal"
+                           IsHitTestVisible="False"/>
+                <TextBlock Text="P: Pause/Resume   S: Stop   Esc: Exit"
+                           Margin="0,6,0,0"
+                           Foreground="#D0FFFFFF"
+                           FontSize="13"
+                           FontFamily="Segoe UI"
+                           IsHitTestVisible="False"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

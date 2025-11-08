@@ -40,9 +40,59 @@
     <Resource Include="Resources\icons\sun.png" />
   </ItemGroup>
 
+  <!-- App/Exe icon setup: generate AppIcon.ico from App_logo.png at build time -->
+  <PropertyGroup>
+    <AppIconPng>Resources\icons\App_logo.png</AppIconPng>
+    <AppIconIco>Resources\icons\AppIcon.ico</AppIconIco>
+    <!-- Use the generated .ico for the executable icon -->
+    <ApplicationIcon>$(AppIconIco)</ApplicationIcon>
+  </PropertyGroup>
+
+  <Target Name="GenerateIcoFromPng" BeforeTargets="BeforeBuild" Condition="'$(EnableIconGen)'=='true'">
+    <Message Text="Generating $(AppIconIco) from $(AppIconPng) if needed..." Importance="low" />
+    <PropertyGroup>
+      <IconSource>$(MSBuildProjectDirectory)\$(AppIconPng)</IconSource>
+      <IconDest>$(MSBuildProjectDirectory)\$(AppIconIco)</IconDest>
+      <IconScript>$(MSBuildProjectDirectory)\build\GenerateIco.ps1</IconScript>
+    </PropertyGroup>
+    <ItemGroup>
+      <_IconSourceFile Include="$(IconSource)" />
+    </ItemGroup>
+    <Error Condition="!Exists('$(IconSource)')" Text="App icon PNG not found at $(IconSource)" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(IconScript)&quot; -SourcePng &quot;$(IconSource)&quot; -DestIco &quot;$(IconDest)&quot;" />
+  </Target>
+
   <ItemGroup>
     <None Update="search_runner.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+    <Page Update="Windows\EdgeOverlayWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\LoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\ConfigPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\RunningPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\CompletionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

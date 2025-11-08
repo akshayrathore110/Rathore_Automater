@@ -7,9 +7,12 @@ namespace RathoreSearchAutomation.Helpers
 {
     public class SearchAutomation
     {
-        private readonly int totalSearches;
-        private readonly int profileKey;
+    private readonly int totalSearches;
+    private readonly int profileKey;
+    private readonly ProfileDataStore dataStore;
         private Process? pythonProcess;
+        private readonly string controlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "automation_control.json");
+        private volatile bool completedSignaled;
         
         public event Action<int, int>? OnProgressUpdate;
         public event Action<string>? OnStatusUpdate;
@@ -20,6 +23,7 @@ namespace RathoreSearchAutomation.Helpers
         {
             totalSearches = searches;
             profileKey = profile;
+            dataStore = new ProfileDataStore(profileKey);
         }
         
         public void Start()
@@ -43,6 +47,13 @@ namespace RathoreSearchAutomation.Helpers
                 }
                 
                 // Create process start info
+                // Initialize control file (not paused, not stopped)
+                File.WriteAllText(controlFilePath, "{\"paused\": false, \"stop\": false}");
+
+                // Prepare used keys file for Python exclusion
+                dataStore.ResetIfDateChanged();
+                string usedKeysFile = dataStore.WriteUsedKeysFile();
+
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "python",
@@ -52,6 +63,9 @@ namespace RathoreSearchAutomation.Helpers
                     RedirectStandardError = true,
                     CreateNoWindow = true
                 };
+                // Provide control path to Python
+                startInfo.EnvironmentVariables["RSA_CONTROL_FILE"] = controlFilePath;
+                startInfo.EnvironmentVariables["RSA_USED_KEYS_FILE"] = usedKeysFile;
                 
                 pythonProcess = new Process { StartInfo = startInfo };
                 
@@ -79,9 +93,18 @@ namespace RathoreSearchAutomation.Helpers
                             OnProgressUpdate?.Invoke(current, total);
                         }
                     }
+                    else if (output.StartsWith("QUERY:"))
+                    {
+                        string query = output.Substring(6).Trim();
+                        dataStore.AddKey(query);
+                    }
                     else if (output.Contains("COMPLETED"))
                     {
-                        OnCompleted?.Invoke();
+                        if (!completedSignaled)
+                        {
+                            completedSignaled = true;
+                            OnCompleted?.Invoke();
+                        }
                     }
                     else if (output.StartsWith("ERROR:"))
                     {
@@ -100,11 +123,21 @@ namespace RathoreSearchAutomation.Helpers
                 };
                 
                 // Start the process
+                pythonProcess.EnableRaisingEvents = true;
+                pythonProcess.Exited += (s, e) =>
+                {
+                    // If script ends without emitting COMPLETED, still move forward
+                    OnStatusUpdate?.Invoke("Python script exited");
+                    if (!completedSignaled)
+                    {
+                        completedSignaled = true;
+                        OnCompleted?.Invoke();
+                    }
+                };
+
                 pythonProcess.Start();
                 pythonProcess.BeginOutputReadLine();
                 pythonProcess.BeginErrorReadLine();
-                
-                pythonProcess.WaitForExit();
             }
             catch (Exception ex)
             {
@@ -114,21 +147,28 @@ namespace RathoreSearchAutomation.Helpers
         
         public void Pause()
         {
+            try { File.WriteAllText(controlFilePath, "{\"paused\": true, \"stop\": false}"); } catch { }
             OnStatusUpdate?.Invoke("Paused - Automation stopped");
         }
         
         public void Resume()
         {
+            try { File.WriteAllText(controlFilePath, "{\"paused\": false, \"stop\": false}"); } catch { }
             OnStatusUpdate?.Invoke("Resuming...");
         }
         
         public void Stop(bool closeBrowser)
         {
+            try { File.WriteAllText(controlFilePath, "{\"paused\": false, \"stop\": true}"); } catch { }
             if (pythonProcess != null && !pythonProcess.HasExited)
             {
                 try
                 {
-                    pythonProcess.Kill();
+                    // Give the script up to 2s to exit gracefully, then kill
+                    if (!pythonProcess.WaitForExit(2000))
+                    {
+                        pythonProcess.Kill();
+                    }
                 }
                 catch { }
             }

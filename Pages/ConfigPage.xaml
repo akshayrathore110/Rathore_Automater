@@ -10,10 +10,15 @@
     </Page.Resources>
 
     <Grid>
-        <!-- Glass Card Container -->
-        <Border MaxWidth="480"
-                Padding="50"
-                CornerRadius="25">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+        <!-- Glass Card Container (stretches with window, with margins) -->
+        <Border Margin="20"
+            MinWidth="400"
+            Padding="32"
+            CornerRadius="25"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center">
             
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity="0.15"/>
@@ -116,6 +121,44 @@
                          DisplayMemberPath="Value"
                          SelectedValuePath="Key"/>
                 
+                <!-- Command Line (Terminal-like) -->
+                <TextBlock Text="Command (optional)"
+                           FontFamily="{StaticResource Roboto}"
+                           FontSize="14"
+                           FontWeight="Medium"
+                           Foreground="#E6000000"
+                           Margin="0,0,0,8"/>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="CommandTextBox"
+                             Style="{StaticResource GlassTextBox}"
+                             FontFamily="Consolas"
+                             FontSize="13"
+                             VerticalContentAlignment="Center"
+                             ToolTipService.ShowDuration="20000"
+                             KeyDown="CommandTextBox_KeyDown"
+                             Margin="0,0,10,0">
+                        <TextBox.ToolTip>
+                            <TextBlock Text="{}Example: -run_all -e{&quot;Default&quot;} t{2}"/>
+                        </TextBox.ToolTip>
+                    </TextBox>
+                    <Button x:Name="RunCommandButton"
+                            Grid.Column="1"
+                            Style="{StaticResource GlassButton}"
+                            Padding="16,10"
+                            Click="RunCommandButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text=">" FontFamily="Consolas" Margin="0,0,6,0"/>
+                            <TextBlock Text="Run Cmd"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
                 <!-- Start Search Button -->
                 <Button x:Name="StartButton"
                        Click="StartButton_Click"
@@ -149,6 +192,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-        </Border>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </Page>
